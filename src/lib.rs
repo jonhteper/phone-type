@@ -13,6 +13,7 @@ impl Display for ErrorInvalidPhone {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Phone(String);
 
 impl Phone {

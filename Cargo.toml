@@ -1,0 +1,12 @@
+[package]
+name = "phone_type"
+version = "0.1.0"
+edition = "2021"
+authors = ["johnteper <git@johnteper.me>"]
+description = "Phone type for Rust"
+homepage = "https://github.com/jonhteper/phone-type"
+license = "MIT"
+repository = "https://github.com/jonhteper/phone-type"
+
+[dependencies]
+phone-number-verifier = "1.0.1"

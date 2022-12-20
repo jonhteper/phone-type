@@ -4,6 +4,7 @@ use phone_number_verifier::{
     verify_phone_number_with_country_code, verify_phone_number_without_country_code,
 };
 use std::fmt::{Display, Formatter};
+use std::ops::Deref;
 
 pub struct ErrorInvalidPhone;
 
@@ -41,6 +42,13 @@ impl Phone {
 impl Display for Phone {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         Display::fmt(&self.0, f)
+    }
+}
+
+impl Deref for Phone {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

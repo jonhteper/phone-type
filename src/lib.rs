@@ -6,6 +6,7 @@ use phone_number_verifier::{
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 
+#[derive(Debug)]
 pub struct ErrorInvalidPhone;
 
 impl Display for ErrorInvalidPhone {
@@ -13,6 +14,8 @@ impl Display for ErrorInvalidPhone {
         write!(f, "Error: Invalid phone format")
     }
 }
+
+impl std::error::Error for ErrorInvalidPhone {}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Phone(String);

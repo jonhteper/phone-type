@@ -1,6 +1,6 @@
 [package]
 name = "phone_type"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["johnteper <git@johnteper.me>"]
 description = "Phone type for Rust"

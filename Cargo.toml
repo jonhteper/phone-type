@@ -11,3 +11,12 @@ keywords = ["format", "types", "type", "phone", "cellphone"]
 
 [dependencies]
 phone-number-verifier = "1.0.1"
+serde = { version = "1", optional = true }
+
+[dev-dependencies]
+serde_json = { version = "1" }
+serde = { version = "1", features = ["derive"] }
+
+[features]
+serde = ["dep:serde"]
+default = ["serde"]

@@ -6,6 +6,10 @@ use phone_number_verifier::{
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 
+#[cfg(feature = "serde")]
+pub mod serde_feature;
+
+
 #[derive(Debug)]
 pub struct ErrorInvalidPhone;
 

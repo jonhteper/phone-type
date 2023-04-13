@@ -9,13 +9,12 @@ use std::ops::Deref;
 #[cfg(feature = "serde")]
 pub mod serde_feature;
 
-
 #[derive(Debug)]
 pub struct ErrorInvalidPhone;
 
 impl Display for ErrorInvalidPhone {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error: Invalid phone format")
+        write!(f, "error: invalid phone format")
     }
 }
 

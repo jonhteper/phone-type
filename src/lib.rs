@@ -9,7 +9,7 @@ use std::ops::Deref;
 #[cfg(feature = "serde")]
 pub mod serde_feature;
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct ErrorInvalidPhone;
 
 impl Display for ErrorInvalidPhone {

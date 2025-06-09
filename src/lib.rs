@@ -8,7 +8,7 @@ use std::ops::Deref;
 use std::str::FromStr;
 
 #[cfg(feature = "serde")]
-pub mod serde_feature;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub struct ErrorInvalidPhone;
@@ -22,6 +22,9 @@ impl Display for ErrorInvalidPhone {
 impl std::error::Error for ErrorInvalidPhone {}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "String"))]
+#[cfg_attr(feature = "serde", serde(into = "String"))]
 pub struct Phone(String);
 
 impl Phone {

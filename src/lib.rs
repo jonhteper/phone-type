@@ -5,6 +5,7 @@ use phone_number_verifier::{
 };
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
+use std::str::FromStr;
 
 #[cfg(feature = "serde")]
 pub mod serde_feature;
@@ -58,6 +59,31 @@ impl Deref for Phone {
     }
 }
 
+impl FromStr for Phone {
+    type Err = ErrorInvalidPhone;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match Phone::new(s) {
+            Ok(p) => Ok(p),
+            Err(_) => Phone::new_with_country(s),
+        }
+    }
+}
+
+impl TryFrom<String> for Phone {
+    type Error = ErrorInvalidPhone;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        Phone::from_str(&s)
+    }
+}
+
+impl From<Phone> for String {
+    fn from(p: Phone) -> Self {
+        p.to_string()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -69,5 +95,8 @@ mod tests {
 
         let phone_result = Phone::new_with_country("+52 111 111 1111");
         assert!(phone_result.is_ok(), "Invalid phone with country code");
+
+        let phone_result = Phone::from_str("111 111 1111");
+        assert!(phone_result.is_ok());
     }
 }

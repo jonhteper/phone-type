@@ -102,4 +102,13 @@ mod tests {
         let phone_result = Phone::from_str("111 111 1111");
         assert!(phone_result.is_ok());
     }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn serde_works() {
+        let phone = Phone::new("111-111-1111").unwrap();
+        let serialized = serde_json::to_string(&phone).unwrap();
+        let deserialized: Phone = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(phone, deserialized);
+    }
 }

@@ -2,15 +2,23 @@
 
 [![Crates.io](https://shields.io/crates/v/phone_type.svg)](https://crates.io/crates/phone_type)
 
-This crate contains the `Phone` type, who is only a String wrapper and uses 
-[phone-number-verifier](https://crates.io/crates/phone-number-verifier) to valid the phone's format.
+A comprehensive Rust crate for handling phone numbers with advanced E.164 support and compile-time country code resolution.
+
+## Features
+
+- 🔢 **Basic Phone Validation**: String wrapper with format validation
+- 📱 **E.164 Support**: Full E.164 international phone number parsing
+- 🌍 **Compile-time Country Codes**: Perfect Hash Functions for zero-runtime-cost country lookup
+- 🚀 **Performance**: Country codes resolved at compile time using official data
+- 📋 **Rich Metadata**: Country names, ISO codes, and formatting options
+- 🔧 **Serde Support**: Built-in serialization/deserialization (feature-gated)
 
 ## Install
 
 Add in `Cargo.toml`:
 
 ```toml
-phone_type = "0.3.0"
+phone_type = "1.0.0-beta.1"
 ```
 
 Or run in your project directory:
@@ -19,11 +27,11 @@ Or run in your project directory:
 cargo add phone_type
 ```
 
-
-
 ## Examples
 
-Use in structure:
+### Basic Usage
+
+Use in structures:
 
 ```rust
 use phone_type::*;
@@ -43,52 +51,97 @@ fn main() {
     /*...*/
 }
 ```
-Force type in constructor:
+
+### E.164 International Phone Numbers
+
 ```rust
-use phone_type::*;
+use phone_type::e_164::Phone;
 
-struct ContactInformation {
-    name: String,
-    age: i8,
-    phone: String,
+fn main() {
+    // Parse E.164 format numbers
+    let phone = Phone::from_e_164("+1234567890").unwrap();
+
+    println!("Country code: {:?}", phone.country_code());      // Some("1")
+    println!("National number: {}", phone.number());           // "234567890"
+
+    // Get country information (compiled at build time!)
+    if let Some(info) = phone.country_info() {
+        println!("Country: {} ({})", info.name, info.iso_code); // "Canada (CA)"
+    }
+
+    // Format with separators
+    println!("Formatted: {}", phone.with_separator('-'));     // "234-567-890"
 }
+```
 
-impl ContactInformation {
-    pub fn new(name: String, age: i8, phone: Phone) -> Self {
-        Self {
-            name,
-            age,
-            phone: phone.to_string(),
+### Advanced E.164 Examples
+
+```rust
+use phone_type::e_164::Phone;
+
+fn main() {
+    let examples = vec![
+        "+52155551234",    // Mexico
+        "+4915123456789",  // Germany
+        "+81312345678",    // Japan
+        "+86138123456789", // China
+    ];
+
+    for number in examples {
+        match Phone::from_e_164(number) {
+            Ok(phone) => {
+                if let Some(info) = phone.country_info() {
+                    println!("{}: {} ({})",
+                        number, info.name, info.iso_code);
+                }
+            }
+            Err(e) => println!("Invalid: {} - {:?}", number, e),
         }
     }
 }
-
-
-fn main() {
-    let info = ContactInformation::new(
-        "John Doe".to_string(),
-        33,
-        Phone::new("111 111 1111").unwrap(),
-    );
-    /*...*/
-}
 ```
 
-## Serde support
+## Features
 
-The serde support is available behind `serde` feature, and is actived by default. If you dont want this feature, use:
+### Default Features
+- `serde` - Serialization/deserialization support
+- `e164` - E.164 international phone number support with compile-time country codes
+
+### Disable Default Features
 
 ```toml
-phone_type = {version = "0.3.0", default-features = false}
+phone_type = { version = "0.5.0", default-features = false }
 ```
 
-### Example
+### Enable Specific Features
+
+```toml
+phone_type = { version = "0.5.0", default-features = false, features = ["e164"] }
+```
+
+## Performance
+
+The E.164 functionality uses Perfect Hash Functions (PHF) to resolve country codes at **compile time**. This means:
+
+- 🚀 **Zero runtime cost** for country code lookup
+- 📊 **O(1) lookup time** for any country code
+- 💾 **Minimal memory footprint** - data embedded in binary
+- 🔄 **No external dependencies** at runtime
+
+```rust
+// This lookup happens at compile time!
+let phone = Phone::from_e_164("+1234567890").unwrap();
+let country = phone.country_info().unwrap(); // Instant lookup
+```
+
+## Serde Support
+
+Serde support is available behind the `serde` feature (enabled by default):
 
 ```rust
 use serde::{Serialize, Deserialize};
 use serde_json::json;
-
-use crate::*;
+use phone_type::*;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 struct Contact {
@@ -102,15 +155,28 @@ fn main() {
         "phone": "111 111 1111"
     });
 
-    let contact = Contact {
-        name: "John Doe".to_string(),
-        phone: Phone::new("111 111 1111").unwrap(),
-    };
-
-    let deserialize_result = serde_json::from_value::<Contact>(contact_json).unwrap();
-
-    assert_eq!(&deserialize_result, &contact);
-
+    let contact: Contact = serde_json::from_value(contact_json).unwrap();
+    println!("{:?}", contact);
 }
 ```
 
+## Country Data Source
+
+The E.164 country codes are sourced from official telecommunications data and compiled into the binary at build time, ensuring:
+
+- ✅ **Accuracy**: Based on official ITU-T standards
+- 🔄 **Completeness**: Covers all active country codes
+- 🛡️ **Reliability**: No network dependencies
+- 🎯 **Efficiency**: Optimized for performance
+
+## Examples
+
+Run the included examples:
+
+```bash
+cargo run --example e164_demo --features e164
+```
+
+## Contributing
+
+Contributions are welcome! The country code data can be updated by modifying `data/country_codes.json` and rebuilding.

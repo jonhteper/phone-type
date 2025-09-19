@@ -26,5 +26,5 @@ serde = { version = "1", features = ["derive"] }
 
 [features]
 serde = ["dep:serde"]
-default = ["serde", "e164"]
 e164 = ["dep:phf"]
+default = []

@@ -10,10 +10,9 @@ repository = "https://github.com/jonhteper/phone-type"
 keywords = ["format", "types", "type", "phone", "cellphone"]
 
 [dependencies]
-phone-number-verifier = "1.0.1"
-regex = {version = "1.11.2", optional = true}
+regex = "1.11.2"
 serde = { version = "1", optional = true, features = ["derive"] }
-thiserror = { version = "2.0.16", optional = true }
+thiserror = "2.0.16"
 phf = { version = "0.11", features = ["macros"], optional = true }
 
 [build-dependencies]
@@ -28,4 +27,4 @@ serde = { version = "1", features = ["derive"] }
 [features]
 serde = ["dep:serde"]
 default = ["serde", "e164"]
-e164 = ["dep:regex", "dep:thiserror", "dep:phf"]
+e164 = ["dep:phf"]

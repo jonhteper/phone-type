@@ -90,25 +90,30 @@ pub static ORDERED_COUNTRY_CODES: &[&str] = &{:?};
         &mut file,
         r#"
 /// Find the best matching country code for a given number
-pub fn find_country_code(number: &str) -> Option<(&'static str, &'static CountryInfo)> {{
+pub fn find_country_code(number: &str) -> Option<&'static str> {{
     for &code in ORDERED_COUNTRY_CODES.iter() {{
         if number.starts_with(code) && number.len() >= code.len() + 4 {{
-            if let Some(info) = COUNTRY_CODES.get(code) {{
-                return Some((code, info));
+            if let Some(_info) = COUNTRY_CODES.get(code) {{
+                return Some(code);
             }}
         }}
     }}
     None
 }}
 
+/// Find the country information for a given code
+pub fn find_country_info(code: &str) -> Option<&'static CountryInfo> {{
+    COUNTRY_CODES.get(code)
+}}
+
 /// Parse country code and number from E.164 format
-pub fn parse_e164(number: &str) -> Option<(&'static str, &str, &'static CountryInfo)> {{
+pub(crate) fn parse_e164(number: &str) -> Option<(&'static str, &str)> {{
     let number = number.strip_prefix('+').unwrap_or(number);
 
-    if let Some((code, info)) = find_country_code(number) {{
+    if let Some(code) = find_country_code(number) {{
         let national_number = &number[code.len()..];
         if national_number.len() >= 4 {{
-            return Some((code, national_number, info));
+            return Some((code, national_number));
         }}
     }}
     None

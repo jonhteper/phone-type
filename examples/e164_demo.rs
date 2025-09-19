@@ -1,4 +1,4 @@
-use phone_type::e_164::Phone;
+use phone_type::Phone;
 
 fn main() {
     println!("=== E.164 Phone Number Parser Demo ===\n");
@@ -28,8 +28,14 @@ fn main() {
                     println!("   Country: {} ({})", info.name, info.iso_code);
                 }
 
-                println!("   Formatted with '-': {}", phone.with_separator('-'));
-                println!("   Formatted with ' ': {}", phone.with_separator(' '));
+                println!(
+                    "   Formatted with '-': {}",
+                    phone.number_with_separator('-')
+                );
+                println!(
+                    "   Formatted with ' ': {}",
+                    phone.number_with_separator(' ')
+                );
                 println!();
             }
             Err(e) => {
@@ -49,8 +55,8 @@ fn main() {
 
     for invalid in invalid_numbers {
         match Phone::from_e_164(invalid) {
-            Ok(_) => println!("✅ Unexpectedly parsed: {}", invalid),
-            Err(e) => println!("❌ Correctly rejected '{}': {:?}", invalid, e),
+            Ok(_) => println!("❌ Unexpectedly parsed: {}", invalid),
+            Err(e) => println!("✅ Correctly rejected '{}': {:?}", invalid, e),
         }
     }
 

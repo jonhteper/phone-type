@@ -1,6 +1,7 @@
-use phone_type::Phone;
-
+#[cfg(feature = "e164")]
 fn main() {
+    use phone_type::Phone;
+
     println!("=== E.164 Phone Number Parser Demo ===\n");
 
     // Test various E.164 phone numbers
@@ -75,3 +76,6 @@ fn main() {
     println!("\n🚀 Country codes are resolved at compile-time using Perfect Hash Functions!");
     println!("💾 No runtime overhead for country code lookup!");
 }
+
+#[cfg(not(feature = "e164"))]
+fn main() {}

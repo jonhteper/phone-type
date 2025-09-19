@@ -46,16 +46,17 @@ fn main() {
     let info = ContactInformation {
         name: "John Doe".to_string(),
         age: 33,
-        phone: Phone::new("111 111 1111").unwrap(),
+        phone: Phone::build("111 111 1111").unwrap(),
     };
     /*...*/
 }
 ```
 
 ### E.164 International Phone Numbers
+*Important*: Enable `e164` feature first.
 
 ```rust
-use phone_type::e_164::Phone;
+use phone_type::Phone;
 
 fn main() {
     // Parse E.164 format numbers
@@ -64,20 +65,20 @@ fn main() {
     println!("Country code: {:?}", phone.country_code());      // Some("1")
     println!("National number: {}", phone.number());           // "234567890"
 
-    // Get country information (compiled at build time!)
+    // Get country information
     if let Some(info) = phone.country_info() {
         println!("Country: {} ({})", info.name, info.iso_code); // "Canada (CA)"
     }
 
     // Format with separators
-    println!("Formatted: {}", phone.with_separator('-'));     // "234-567-890"
+    println!("Formatted: {}", phone.number_with_separator('-'));     // "234-567-890"
 }
 ```
 
 ### Advanced E.164 Examples
 
 ```rust
-use phone_type::e_164::Phone;
+use phone_type::Phone;
 
 fn main() {
     let examples = vec![
@@ -103,20 +104,17 @@ fn main() {
 
 ## Features
 
-### Default Features
+This crate provides the following features:
+
 - `serde` - Serialization/deserialization support
 - `e164` - E.164 international phone number support with compile-time country codes
 
-### Disable Default Features
-
-```toml
-phone_type = { version = "0.5.0", default-features = false }
-```
+**Important**: No features are enabled by default. You must explicitly enable the features you need.
 
 ### Enable Specific Features
 
 ```toml
-phone_type = { version = "0.5.0", default-features = false, features = ["e164"] }
+phone_type = { version = "1.0.0-beta.1", features = ["serde", "e164"] }
 ```
 
 ## Performance
@@ -136,7 +134,7 @@ let country = phone.country_info().unwrap(); // Instant lookup
 
 ## Serde Support
 
-Serde support is available behind the `serde` feature (enabled by default):
+Serde support is available behind the `serde` feature:
 
 ```rust
 use serde::{Serialize, Deserialize};

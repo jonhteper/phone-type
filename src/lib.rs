@@ -98,30 +98,8 @@ impl Phone {
 
         // Format based on common patterns
         match len {
-            10 => {
-                // Format as XXX-XXX-XXXX
-                format!(
-                    "{}{}{}{}{}",
-                    &number[0..3],
-                    separator,
-                    &number[3..6],
-                    separator,
-                    &number[6..10]
-                )
-            }
-            11 => {
-                // Format as X-XXX-XXX-XXXX
-                format!(
-                    "{}{}{}{}{}{}{}",
-                    &number[0..1],
-                    separator,
-                    &number[1..4],
-                    separator,
-                    &number[4..7],
-                    separator,
-                    &number[7..11]
-                )
-            }
+            10 => self.ten_digits_with_separator(separator),
+            11 => self.eleven_digits_with_separator(separator),
             _ => {
                 // For other lengths, insert separator every 3 digits
                 let mut result = String::with_capacity(number.len() + (number.len() / 3));
@@ -134,6 +112,32 @@ impl Phone {
                 result
             }
         }
+    }
+
+    // Format as XXX-XXX-XXXX
+    fn ten_digits_with_separator(&self, separator: char) -> String {
+        format!(
+            "{}{}{}{}{}",
+            &self.number[0..3],
+            separator,
+            &self.number[3..6],
+            separator,
+            &self.number[6..10]
+        )
+    }
+
+    // Format as X-XXX-XXX-XXXX
+    fn eleven_digits_with_separator(&self, separator: char) -> String {
+        format!(
+            "{}{}{}{}{}{}{}",
+            &self.number[0..1],
+            separator,
+            &self.number[1..4],
+            separator,
+            &self.number[4..7],
+            separator,
+            &self.number[7..11]
+        )
     }
 
     #[cfg(feature = "e164")]

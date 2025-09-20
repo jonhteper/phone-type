@@ -1,6 +1,6 @@
 [package]
 name = "phone_type"
-version = "0.4.0"
+version = "1.0.0-beta.1"
 edition = "2021"
 authors = ["johnteper <git@johnteper.me>"]
 description = "Phone type for Rust"
@@ -10,8 +10,15 @@ repository = "https://github.com/jonhteper/phone-type"
 keywords = ["format", "types", "type", "phone", "cellphone"]
 
 [dependencies]
-phone-number-verifier = "1.0.1"
+regex = "1.11.2"
 serde = { version = "1", optional = true, features = ["derive"] }
+thiserror = "2.0.16"
+phf = { version = "0.11", features = ["macros"], optional = true }
+
+[build-dependencies]
+phf_codegen = "0.11"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [dev-dependencies]
 serde_json = { version = "1" }
@@ -19,4 +26,5 @@ serde = { version = "1", features = ["derive"] }
 
 [features]
 serde = ["dep:serde"]
-default = ["serde"]
+e164 = ["dep:phf"]
+default = []

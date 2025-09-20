@@ -31,6 +31,9 @@ pub struct Phone {
 }
 
 impl Phone {
+    /// Try to create a new [Phone](phone_type::Phone) type from a `&str`,
+    /// first attempting to parse it as a phone number with a country code,
+    /// and then without a country code.
     pub fn build(phone: &str) -> Result<Self, Error> {
         match Phone::build_with_country_code(phone) {
             Ok(phone) => Ok(phone),
@@ -38,6 +41,7 @@ impl Phone {
         }
     }
 
+    /// Try to create a new [Phone](phone_type::Phone) type with a country code from a `&str`.
     pub fn build_with_country_code(input: &str) -> Result<Self, Error> {
         let captures = WITH_COUNTRY_CODE_REGEX
             .captures(input)
@@ -61,6 +65,7 @@ impl Phone {
         Ok(phone)
     }
 
+    /// Try to create a new [Phone](phone_type::Phone) type without a country code from a `&str`.
     pub fn build_without_country_code(input: &str) -> Result<Self, Error> {
         let captures = WITHOUT_COUNTRY_CODE_REGEX
             .captures(input)
@@ -84,10 +89,17 @@ impl Phone {
         self.country_code.as_deref()
     }
 
+    /// Returns the phone number without country code nor separator.
     pub fn number(&self) -> &str {
         &self.number
     }
 
+    /// Returns the phone number with a separator, using the provided character.
+    ///
+    /// The algorithm uses different patterns based on the length of the number:
+    /// * For 10 digits, it formats as XXX-XXX-XXXX.
+    /// * For 11 digits, it formats as X-XXX-XXX-XXXX.
+    /// * For other lengths, it inserts the separator every 3 digits.
     pub fn number_with_separator(&self, separator: char) -> String {
         let number = &self.number;
         let len = number.len();
@@ -114,7 +126,7 @@ impl Phone {
         }
     }
 
-    // Format as XXX-XXX-XXXX
+    /// Returns the phone number with a separator, using the provided character with format as XXX-XXX-XXXX.
     fn ten_digits_with_separator(&self, separator: char) -> String {
         format!(
             "{}{}{}{}{}",
@@ -126,7 +138,7 @@ impl Phone {
         )
     }
 
-    // Format as X-XXX-XXX-XXXX
+    /// Returns the phone number with a separator, using the provided character with format as X-XXX-XXX-XXXX.
     fn eleven_digits_with_separator(&self, separator: char) -> String {
         format!(
             "{}{}{}{}{}{}{}",
@@ -140,6 +152,8 @@ impl Phone {
         )
     }
 
+    /// Try to create a [Phone](phone_type::Phone) from a `&str` based on E.164 format.
+    /// Validates the country code based on this [list] (https://gist.githubusercontent.com/anubhavshrimal/75f6183458db8c453306f93521e93d37/raw/f77e7598a8503f1f70528ae1cbf9f66755698a16/CountryCodes.json).
     #[cfg(feature = "e164")]
     pub fn from_e_164(s: &str) -> Result<Self, Error> {
         if !E_164_REGEX.is_match(s) {
@@ -157,6 +171,7 @@ impl Phone {
         Err(Error::NotE164Format)
     }
 
+    /// Retrieves country information based on the compiled country codes list.
     #[cfg(feature = "e164")]
     pub fn country_info(&self) -> Option<&'static CountryInfo> {
         self.country_code

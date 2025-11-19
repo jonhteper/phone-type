@@ -35,10 +35,16 @@ impl Phone {
     /// first attempting to parse it as a phone number with a country code,
     /// and then without a country code.
     pub fn build(phone: &str) -> Result<Self, Error> {
-        match Phone::build_without_country_code(phone) {
-            Ok(phone) => Ok(phone),
-            Err(_) => Phone::build_with_country_code(phone),
+        if let Ok(phone) = Phone::build_without_country_code(phone) {
+            return Ok(phone);
         }
+
+        #[cfg(feature = "e164")]
+        if let Ok(phone) = Phone::from_e_164(phone) {
+            return Ok(phone);
+        }
+
+        Phone::build_with_country_code(phone)
     }
 
     /// Try to create a new [Phone](phone_type::Phone) type with a country code from a `&str`.
@@ -252,9 +258,19 @@ mod tests {
         let phone_result = Phone::from_str("+52 4420000000");
         assert!(phone_result.is_ok());
         let phone = phone_result.unwrap();
-        dbg!(&phone);
         assert_eq!(phone.number(), "4420000000");
         assert_eq!(phone.country_code(), Some("52"));
+
+        #[cfg(feature = "e164")]
+        {
+            let phone_result = Phone::from_str("+524420000000");
+            assert!(phone_result.is_ok());
+            let phone = phone_result.unwrap();
+            assert_eq!(phone.number(), "4420000000");
+            assert_eq!(phone.country_code(), Some("52"));
+            assert!(phone.country_info().is_some());
+            assert_eq!(phone.country_info().unwrap().name, "Mexico");
+        }
     }
 
     #[cfg(feature = "serde")]

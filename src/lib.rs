@@ -35,9 +35,9 @@ impl Phone {
     /// first attempting to parse it as a phone number with a country code,
     /// and then without a country code.
     pub fn build(phone: &str) -> Result<Self, Error> {
-        match Phone::build_with_country_code(phone) {
+        match Phone::build_without_country_code(phone) {
             Ok(phone) => Ok(phone),
-            Err(_) => Phone::build_without_country_code(phone),
+            Err(_) => Phone::build_with_country_code(phone),
         }
     }
 
@@ -239,6 +239,22 @@ mod tests {
 
         let phone_result = Phone::from_str("111 111 1111");
         assert!(phone_result.is_ok());
+    }
+
+    #[test]
+    fn from_str_works() {
+        let phone_result = Phone::from_str("4420000000");
+        assert!(phone_result.is_ok());
+        let phone = phone_result.unwrap();
+        assert_eq!(phone.number(), "4420000000");
+        assert!(phone.country_code().is_none());
+
+        let phone_result = Phone::from_str("+52 4420000000");
+        assert!(phone_result.is_ok());
+        let phone = phone_result.unwrap();
+        dbg!(&phone);
+        assert_eq!(phone.number(), "4420000000");
+        assert_eq!(phone.country_code(), Some("52"));
     }
 
     #[cfg(feature = "serde")]
